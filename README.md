@@ -26,3 +26,6 @@ NEON FALL is an addictive hyper-casual game where you control a neon character f
 - Use power-ups wisely
 
 ## 🚀 Play Online
+
+📄 License
+This project is currently private. All rights reserved.
