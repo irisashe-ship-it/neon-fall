@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="NEON FALL v17 - Versión altamente pulida con más profundidad y monetización.">
+    <meta name="theme-color" content="#0f172a">
+    <title>NEON FALL v17 • Final</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0f172a;
+            color: white;
+            margin: 0;
+            padding: 0;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .pixel-font {
+            font-family: 'Press Start 2P', system-ui;
+            image-rendering: pixelated;
+        }
+
+        .game-container {
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+            background: #0f172a;
+        }
+
+        #game-canvas {
+            touch-action: none;
+            image-rendering: crisp-edges;
+            border: 4px solid #334155;
+            box-shadow: 0 0 0 8px #1e2937, 0 25px 50px -12px rgb(0 0 0 / 0.4);
+            display: block;
+        }
+
+        .neon-button {
+            background: linear-gradient(#67e8f9, #22d3ee);
+            color: #0f172a;
+            font-weight: bold;
+            border: none;
+            padding: 11px 34px;
+            border-radius: 9999px;
+            font-size: 0.92rem;
+            cursor: pointer;
+            box-shadow: 0 0 18px #67e8f9;
+            transition: transform 0.1s ease;
+        }
+        
+        .neon-button:active {
+            transform: scale(0.94);
+        }
+
+        .retro-bg {
+            background-image: 
+                linear-gradient(rgba(15, 23, 42, 0.97), rgba(15, 23, 42, 0.97)),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(103, 232, 249, 0.016) 2px, rgba(103, 232, 249, 0.016) 4px);
+        }
+
+        .modal {
+            background: #0f172a;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.6);
+            border: 1px solid #334155;
+        }
+
+        .music-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid #334155;
+            color: #67e8f9;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            z-index: 50;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="retro-bg">
+    <div class="game-container w-full max-w-[420px] mx-auto min-h-screen">
+        
+        <!-- Header -->
+        <div style="padding: 9px 11px 0px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="width: 30px; height: 30px; background: linear-gradient(#67e8f9, #22d3ee); border-radius: 5px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 8px #67e8f9;">
+                    <i class="fa-solid fa-bolt" style="color: #0f172a; font-size: 15px;"></i>
+                </div>
+                <div>
+                    <h1 class="pixel-font" style="font-size: 16px; margin: 0; color: #67e8f9;">NEON FALL</h1>
+                    <p style="margin: -1px 0 0; font-size: 6px; color: #64748b;">v17 • Final</p>
+                </div>
+            </div>
+            
+            <div style="background: #1e2937; padding: 2px 7px; border-radius: 9999px; display: flex; align-items: center; gap: 2px; font-size: 8px;">
+                <i class="fa-solid fa-tachometer-alt" style="color: #34d399;"></i>
+                <span id="best-score-header" class="pixel-font" style="color: #34d399; font-weight: bold;">0000</span>
+            </div>
+        </div>
+
+        <!-- Game Canvas -->
+        <div style="margin: 0 7px; border-radius: 9px; overflow: hidden; border: 4px solid #334155; box-shadow: 0 0 0 8px #1e2937, 0 25px 50px -12px rgb(0 0 0 / 0.5); position: relative;">
+            <canvas id="game-canvas" width="400" height="600"></canvas>
+            
+            <div id="music-btn" class="music-btn" onclick="toggleMusic()">
+                <i class="fa-solid fa-music"></i>
+            </div>
+            
+            <!-- Start Overlay -->
+            <div id="start-overlay" style="position: absolute; inset: 0; background: linear-gradient(rgba(15,23,42,0.97), rgba(15,23,42,0.94)); display: flex; align-items: center; justify-content: center; border-radius: 7px;">
+                <div style="text-align: center; padding: 0 9px;">
+                    <div style="margin-bottom: 4px;">
+                        <i class="fa-solid fa-bolt" style="font-size: 34px; color: #67e8f9; margin-bottom: 0; filter: drop-shadow(0 0 2px #67e8f9);"></i>
+                        <h2 class="pixel-font" style="font-size: 22px; margin: 0; color: white; line-height: 1;">NEON<br>FALL</h2>
+                        <p style="color: #67e8f9; font-size: 6px; margin-top: 0;">v17 FINAL</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 7px; display: flex; justify-content: center; gap: 5px;">
+                        <button onclick="showShop()" 
+                                style="background: #1e2937; color: #f59e0b; border: 1px solid #334155; padding: 3px 8px; border-radius: 9999px; font-size: 8px; cursor: pointer;">
+                            <i class="fa-solid fa-store"></i> TIENDA
+                        </button>
+                        <button onclick="claimDailyReward()" 
+                                style="background: #1e2937; color: #34d399; border: 1px solid #334155; padding: 3px 8px; border-radius: 9999px; font-size: 8px; cursor: pointer;">
+                            <i class="fa-solid fa-gift"></i> DIARIO
+                        </button>
+                    </div>
+                    
+                    <button onclick="startGame()" class="neon-button">
+                        <i class="fa-solid fa-play" style="margin-right: 4px;"></i> JUGAR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Over Overlay -->
+            <div id="gameover-overlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.96); display: none; align-items: center; justify-content: center; border-radius: 7px; padding: 7px;">
+                <div style="text-align: center; width: 100%;">
+                    <i class="fa-solid fa-skull" style="font-size: 30px; color: #f43f5e; margin-bottom: 0;"></i>
+                    <h3 class="pixel-font" style="font-size: 14px; margin: 0 0 4px;">GAME OVER</h3>
+                    
+                    <div style="margin-bottom: 5px;">
+                        <div style="font-size: 6px; color: #64748b;">DISTANCIA</div>
+                        <div id="final-score" class="pixel-font" style="font-size: 26px; font-weight: bold;">0000</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 3px;">
+                            <div style="background: #1e2937; border: 1px solid #334155; border-radius: 6px; padding: 2px;">
+                                <div style="font-size: 5px; color: #64748b;">MEJOR</div>
+                                <div id="best-score-final" class="pixel-font" style="font-size: 11px; color: #34d399;">0000</div>
+                            </div>
+                            <div style="background: #1e2937; border: 1px solid #334155; border-radius: 6px; padding: 2px;">
+                                <div style="font-size: 5px; color: #64748b;">MONEDAS</div>
+                                <div id="coins-collected" class="pixel-font" style="font-size: 11px; color: #f59e0b;">0</div>
+                            </div>
+                            <div style="background: #1e2937; border: 1px solid #334155; border-radius: 6px; padding: 2px;">
+                                <div style="font-size: 5px; color: #64748b;">COMBO</div>
+                                <div id="max-combo-final" class="pixel-font" style="font-size: 11px; color: #a78bfa;">0x</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="watchAdToDoubleCoins()" id="double-coins-btn"
+                            style="width: 100%; background: linear-gradient(#f59e0b, #d97706); color: #0f172a; padding: 5px; border-radius: 7px; font-weight: bold; font-size: 9px; border: none; margin-bottom: 4px; cursor: pointer; display: none;">
+                        <i class="fa-solid fa-play-circle"></i> VER ANUNCIO ×2 MONEDAS
+                    </button>
+
+                    <div style="display: flex; gap: 3px;">
+                        <button onclick="watchAdForContinue()" 
+                                style="flex: 1; background: #7c3aed; color: white; padding: 4px; border-radius: 7px; font-weight: 600; font-size: 8px; border: none; cursor: pointer;">
+                            <i class="fa-solid fa-play-circle"></i> ANUNCIO + VIDA
+                        </button>
+                        
+                        <button onclick="restartGame()" 
+                                style="flex: 1; background: white; color: #0f172a; padding: 4px; border-radius: 7px; font-weight: bold; font-size: 8px; border: none; cursor: pointer;">
+                            <i class="fa-solid fa-redo"></i> REINICIAR
+                        </button>
+                    </div>
+                    
+                    <button onclick="goToMenu()" style="margin-top: 4px; background: transparent; color: #64748b; border: none; font-size: 7px; cursor: pointer;">
+                        Volver al menú
+                    </button>
+                </div>
+            </div>
+
+            <!-- HUD -->
+            <div id="hud" style="position: absolute; top: 0; left: 0; right: 0; padding: 3px; display: none; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; align-items: center; gap: 2px;">
+                    <div style="background: rgba(15,23,42,0.88); padding: 0px 4px; border-radius: 9999px; display: flex; align-items: center; gap: 2px; font-size: 8px; border: 1px solid #334155;">
+                        <i class="fa-solid fa-tachometer-alt" style="color: #67e8f9;"></i>
+                        <span id="score-display" class="pixel-font" style="font-weight: bold; font-size: 8px;">0000</span>
+                    </div>
+                    
+                    <div id="lives-container" style="background: rgba(15,23,42,0.88); padding: 0px 2px; border-radius: 9999px; display: flex; align-items: center; gap: 0px; border: 1px solid #334155;">
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 2px;">
+                    <div id="combo-display" style="display: none; background: #7c3aed; padding: 0px 2px; border-radius: 9999px; font-size: 7px; font-weight: bold; align-items: center;">
+                        <span id="combo-text">1x</span>
+                    </div>
+                    
+                    <div style="background: rgba(15,23,42,0.88); padding: 0px 3px; border-radius: 9999px; display: flex; align-items: center; gap: 2px; font-size: 8px; border: 1px solid #334155;">
+                        <i class="fa-solid fa-coins" style="color: #f59e0b;"></i>
+                        <span id="coins-display" class="pixel-font" style="font-weight: bold; font-size: 8px; color: #f59e0b;">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 5px 8px; display: flex; justify-content: space-between; font-size: 6px; color: #64748b;">
+            <div onclick="showMonetizationInfo()" style="cursor: pointer; display: flex; align-items: center; gap: 1px;">
+                <i class="fa-solid fa-ad"></i>
+                <span style="text-decoration: underline;">Monetización</span>
+            </div>
+            <div>v17 • Final Pulido</div>
+        </div>
+    </div>
+
+    <!-- Shop Modal -->
+    <div id="shop-modal" onclick="if (event.target.id === 'shop-modal') hideShop()" 
+         style="position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 200; padding: 8px;">
+        <div onclick="event.stopImmediatePropagation()" class="modal" style="width: 100%; max-width: 290px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-store" style="color: #f59e0b;"></i> 
+                    <span>Tienda NEON</span>
+                </h3>
+                <div style="background: #1e2937; padding: 1px 7px; border-radius: 9999px; display: flex; align-items: center; gap: 2px; font-size: 10px;">
+                    <i class="fa-solid fa-coins" style="color: #f59e0b;"></i>
+                    <span id="shop-coins" style="font-weight: bold;">0</span>
+                </div>
+            </div>
+            
+            <div id="shop-items" style="display: flex; flex-direction: column; gap: 4px; max-height: 240px; overflow-y: auto;"></div>
+            
+            <button onclick="hideShop()" style="margin-top: 10px; width: 100%; padding: 6px; background: #334155; color: white; border: none; border-radius: 8px; font-size: 10px; cursor: pointer;">
+                Cerrar tienda
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== SAFE LOCALSTORAGE ====================
+        let memoryStorage = {};
+
+        function safeGetItem(key, defaultValue = null) {
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    const value = localStorage.getItem(key);
+                    if (value !== null) return value;
+                }
+            } catch (e) {}
+            return memoryStorage[key] !== undefined ? memoryStorage[key] : defaultValue;
+        }
+
+        function safeSetItem(key, value) {
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem(key, value);
+                    return;
+                }
+            } catch (e) {}
+            memoryStorage[key] = value;
+        }
+
+        // ==================== MUSIC + SOUND ====================
+        let audioCtx;
+        let musicInterval = null;
+        let isMusicPlaying = true;
+        let musicGain;
+        let interstitialCount = 0;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                musicGain = audioCtx.createGain();
+                musicGain.gain.value = 0.05;
+                musicGain.connect(audioCtx.destination);
+            }
+        }
+
+        function playNote(freq, duration, type = 'sawtooth', volume = 0.16) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.value = volume;
+            filter.type = 'lowpass';
+            filter.frequency.value = 950;
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(musicGain);
+
+            osc.start();
+            setTimeout(() => {
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.04);
+                setTimeout(() => osc.stop(), 60);
+            }, duration);
+        }
+
+        function playSound(type) {
+            if (!audioCtx) initAudio();
+
+            switch(type) {
+                case 'boost': playNote(620, 110, 'sawtooth', 0.14); break;
+                case 'coin': playNote(860, 140, 'sine', 0.12); break;
+                case 'bounce': playNote(460, 90, 'sine', 0.1); break;
+                case 'hit': playNote(90, 150, 'sawtooth', 0.2); break;
+                case 'gameover': playNote(130, 380, 'sine', 0.16); break;
+                case 'powerup': playNote(440, 170, 'square', 0.13); break;
+            }
+        }
+
+        function playAddictiveMusic() {
+            if (!isMusicPlaying || musicInterval) return;
+
+            let step = 0;
+            musicInterval = setInterval(() => {
+                if (!isMusicPlaying) {
+                    clearInterval(musicInterval);
+                    musicInterval = null;
+                    return;
+                }
+
+                const pattern = [
+                    { freq: 440, dur: 130, type: 'sawtooth' },
+                    { freq: 523, dur: 130, type: 'sawtooth' },
+                    { freq: 659, dur: 210, type: 'sawtooth' },
+                    { freq: 523, dur: 110, type: 'sawtooth' },
+                    { freq: 440, dur: 130, type: 'sawtooth' },
+                    { freq: 523, dur: 130, type: 'sawtooth' },
+                    { freq: 784, dur: 250, type: 'sawtooth' },
+                    { freq: 659, dur: 150, type: 'sawtooth' },
+                    { freq: 523, dur: 130, type: 'sawtooth' },
+                    { freq: 440, dur: 310, type: 'sawtooth' },
+                ];
+
+                const note = pattern[step % pattern.length];
+                playNote(note.freq, note.dur, note.type, 0.12);
+
+                if (step % 2 === 0) {
+                    playNote(110, 210, 'sawtooth', 0.06);
+                }
+                step++;
+            }, 230);
+        }
+
+        function toggleMusic() {
+            isMusicPlaying = !isMusicPlaying;
+            const btn = document.getElementById('music-btn');
+            
+            if (isMusicPlaying) {
+                btn.innerHTML = '<i class="fa-solid fa-music"></i>';
+                btn.style.color = '#67e8f9';
+                if (gameState === 'playing') playAddictiveMusic();
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-mute"></i>';
+                btn.style.color = '#64748b';
+                if (musicInterval) {
+                    clearInterval(musicInterval);
+                    musicInterval = null;
+                }
+            }
+        }
+
+        function stopMusic() {
+            if (musicInterval) {
+                clearInterval(musicInterval);
+                musicInterval = null;
+            }
+        }
+
+        // ==================== GAME VARIABLES ====================
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d', { alpha: true });
+        ctx.imageSmoothingEnabled = false;
+
+        let gameState = 'menu';
+        let score = 0;
+        let coins = 0;
+        let totalCoins = parseInt(safeGetItem('neonFallTotalCoins_v17')) || 180;
+        let combo = 1;
+        let maxCombo = 1;
+        let highScore = parseInt(safeGetItem('neonFallHighScore_v17')) || 0;
+
+        let magnetLevel = parseInt(safeGetItem('neonFallMagnetLevel_v17')) || 0;
+        let scoreBoostLevel = parseInt(safeGetItem('neonFallScoreBoostLevel_v17')) || 0;
+        let extraLifeLevel = parseInt(safeGetItem('neonFallExtraLifeLevel_v17')) || 0;
+        let characterLevel = parseInt(safeGetItem('neonFallCharacterLevel_v17')) || 0; // Nuevo
+
+        let lastDailyClaim = safeGetItem('neonFallLastDaily_v17') || '';
+        let dailyStreak = parseInt(safeGetItem('neonFallDailyStreak_v17')) || 0;
+
+        let player = { 
+            x: 188, y: 120, width: 22, height: 22, 
+            vx: 0, vy: 2.7, gravity: 0.13, 
+            boostForce: -5.8, maxSpeedX: 5.8 
+        };
+
+        let obstacles = [];
+        let collectibles = [];
+        let particles = [];
+        let neonTrails = [];
+        let activePowerUp = null;
+
+        let gameSpeed = 1.0;
+        let frame = 0;
+        let lives = 3;
+        let maxLives = 3 + extraLifeLevel;
+        let shieldActive = false;
+        let screenShake = 0;
+        let lastGameOverCoins = 0;
+
+        let touchStartX = 0;
+        let isDragging = false;
+
+        function updateHighScore() {
+            document.getElementById('best-score-header').innerText = String(highScore).padStart(4, '0');
+        }
+
+        function updateHUD() {
+            document.getElementById('score-display').innerText = String(Math.floor(score)).padStart(4, '0');
+            document.getElementById('coins-display').innerText = coins;
+
+            const container = document.getElementById('lives-container');
+            container.innerHTML = '';
+            for (let i = 0; i < maxLives; i++) {
+                const heart = document.createElement('i');
+                heart.className = `fa-solid fa-heart ${i < lives ? 'text-rose-500' : 'text-slate-600'}`;
+                heart.style.margin = '0 0px';
+                container.appendChild(heart);
+            }
+
+            const comboEl = document.getElementById('combo-display');
+            if (combo > 1) {
+                comboEl.style.display = 'flex';
+                document.getElementById('combo-text').innerText = combo + 'x';
+            } else {
+                comboEl.style.display = 'none';
+            }
+        }
+
+        function resetGame() {
+            player.x = 188; player.y = 110;
+            player.vx = 0; player.vy = 2.7;
+            obstacles = []; collectibles = []; particles = []; neonTrails = [];
+            score = 0; coins = 0; combo = 1; maxCombo = 1;
+            lives = maxLives; gameSpeed = 1.0; frame = 0;
+            shieldActive = false; screenShake = 0;
+            activePowerUp = null;
+            lastGameOverCoins = 0;
+
+            for (let i = 0; i < 8; i++) {
+                const rand = Math.random();
+                let type = 'normal';
+                if (rand > 0.58) type = 'moving';
+                else if (rand > 0.73) type = 'breakable';
+                else if (rand > 0.84) type = 'bouncy';
+
+                obstacles.push({
+                    x: Math.random() * 245 + 62,
+                    y: 175 + i * 68,
+                    width: type === 'moving' ? 19 : 42 + Math.random() * 30,
+                    height: type === 'moving' ? 19 : 6,
+                    type: type,
+                    vx: type === 'moving' ? (Math.random() > 0.5 ? 1.3 : -1.3) : 0,
+                    health: type === 'breakable' ? 1 : 999
+                });
+            }
+        }
+
+        function drawPlayer() {
+            ctx.save();
+
+            ctx.shadowColor = '#67e8f9';
+            ctx.shadowBlur = 11;
+            ctx.fillStyle = '#67e8f9';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            ctx.shadowBlur = 2;
+            ctx.fillStyle = '#e0f2fe';
+            ctx.fillRect(player.x + 2, player.y + 2, player.width - 5, player.height - 5);
+
+            if (shieldActive) {
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = '#60a5fa';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.arc(player.x + player.width/2, player.y + player.height/2, player.width/1.25, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            ctx.shadowBlur = 0;
+            ctx.restore();
+
+            if (Math.abs(player.vx) > 1.4 || Math.abs(player.vy) > 2.1) {
+                neonTrails.push({
+                    x: player.x + player.width/2,
+                    y: player.y + player.height/2,
+                    life: 4,
+                    size: 10 + Math.random() * 2
+                });
+            }
+        }
+
+        function drawNeonTrails() {
+            for (let i = neonTrails.length - 1; i >= 0; i--) {
+                const t = neonTrails[i];
+                t.life--;
+                t.size *= 0.82;
+
+                if (t.life <= 0) {
+                    neonTrails.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = t.life / 5;
+                ctx.shadowColor = '#67e8f9';
+                ctx.shadowBlur = 4;
+                ctx.fillStyle = '#67e8f9';
+                ctx.beginPath();
+                ctx.arc(t.x, t.y, t.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function spawnObstacle() {
+            const rand = Math.random();
+            let type = 'normal';
+            if (rand > 0.56) type = 'moving';
+            else if (rand > 0.71) type = 'breakable';
+            else if (rand > 0.83) type = 'bouncy';
+
+            obstacles.push({
+                x: Math.random() * 255 + 55,
+                y: -13,
+                width: type === 'moving' ? 18 : 40 + Math.random() * 32,
+                height: type === 'moving' ? 18 : 5,
+                type: type,
+                vx: type === 'moving' ? (Math.random() > 0.5 ? 1.35 : -1.35) : 0,
+                health: type === 'breakable' ? 1 : 999
+            });
+        }
+
+        function spawnCoin() {
+            collectibles.push({
+                x: Math.random() * 315 + 42,
+                y: -10,
+                size: 7,
+                collected: false
+            });
+        }
+
+        function spawnPowerUp() {
+            const types = ['magnet', 'scoreBoost', 'slowMo', 'shield'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            obstacles.push({
+                x: Math.random() * 265 + 48,
+                y: -14,
+                width: 16,
+                height: 16,
+                type: 'powerup',
+                powerUpType: type
+            });
+        }
+
+        function activatePowerUp(type) {
+            playSound('powerup');
+            
+            if (type === 'magnet') {
+                const duration = 300 + (magnetLevel * 30);
+                activePowerUp = { type: 'magnet', timer: duration };
+                createParticles(player.x + 11, player.y + 11, 8, '#f59e0b', 1.0);
+            } else if (type === 'scoreBoost') {
+                const duration = 240 + (scoreBoostLevel * 25);
+                activePowerUp = { type: 'scoreBoost', timer: duration };
+                createParticles(player.x + 11, player.y + 11, 7, '#a78bfa', 0.9);
+            } else if (type === 'slowMo') {
+                gameSpeed = Math.max(0.48, gameSpeed * 0.42);
+                activePowerUp = { type: 'slowMo', timer: 180 };
+                createParticles(player.x + 11, player.y + 11, 10, '#34d399', 1.1);
+            } else if (type === 'shield') {
+                shieldActive = true;
+                createParticles(player.x + 11, player.y + 11, 6, '#60a5fa', 1.0);
+            }
+        }
+
+        function updatePowerUps() {
+            if (!activePowerUp) return;
+            activePowerUp.timer--;
+
+            if (activePowerUp.type === 'slowMo' && activePowerUp.timer % 22 === 0) {
+                gameSpeed = Math.min(2.65, gameSpeed + 0.045);
+            }
+
+            if (activePowerUp.timer <= 0) {
+                activePowerUp = null;
+            }
+        }
+
+        function createParticles(x, y, count, color, intensity = 1) {
+            if (particles.length > 20) return;
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 3.2 * intensity,
+                    vy: (Math.random() - 0.5) * 2.5 * intensity,
+                    life: 8 + Math.random() * 6,
+                    color, size: 1.4 + Math.random() * 1.1
+                });
+            }
+        }
+
+        function checkCollision(a, b) {
+            return !(a.x + a.width < b.x || a.x > b.x + b.width || a.y + a.height < b.y || a.y > b.y + b.height);
+        }
+
+        function gameLoop() {
+            if (gameState !== 'playing') return;
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = 'rgba(103, 232, 249, 0.015)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < canvas.height; y += 17) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            let shakeX = 0, shakeY = 0;
+            if (screenShake > 0) {
+                shakeX = (Math.random() - 0.5) * screenShake;
+                shakeY = (Math.random() - 0.5) * screenShake;
+                screenShake *= 0.65;
+                if (screenShake < 0.1) screenShake = 0;
+            }
+
+            ctx.save();
+            ctx.translate(shakeX, shakeY);
+
+            // Player
+            player.vy += player.gravity;
+            player.y += player.vy;
+            player.x += player.vx;
+
+            if (player.x < 10) player.x = 10;
+            if (player.x + player.width > canvas.width - 10) player.x = canvas.width - 10 - player.width;
+
+            if (player.y < 38) player.vy = 1.8;
+
+            if (player.y > canvas.height + 8) {
+                loseLife();
+                if (gameState !== 'playing') return;
+            }
+
+            drawPlayer();
+            drawNeonTrails();
+
+            updatePowerUps();
+
+            // Obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obs = obstacles[i];
+                obs.y += gameSpeed;
+                if (obs.vx) obs.x += obs.vx;
+
+                if (obs.x < 11 || obs.x + obs.width > canvas.width - 11) {
+                    if (obs.vx) obs.vx *= -1;
+                }
+
+                if (obs.type === 'normal') {
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.fillRect(obs.x, obs.y, obs.width, 2);
+                } else if (obs.type === 'moving') {
+                    ctx.shadowColor = '#c026d3';
+                    ctx.shadowBlur = 2;
+                    ctx.fillStyle = '#c026d3';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#e0e7ff';
+                    ctx.fillRect(obs.x + 1, obs.y + 1, obs.width - 2, obs.height - 2);
+                } else if (obs.type === 'breakable') {
+                    ctx.shadowColor = '#f59e0b';
+                    ctx.shadowBlur = 1.5;
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#fef08c';
+                    ctx.fillRect(obs.x + 1, obs.y + 1, obs.width - 2, obs.height - 2);
+                } else if (obs.type === 'bouncy') {
+                    ctx.shadowColor = '#34d399';
+                    ctx.shadowBlur = 3;
+                    ctx.fillStyle = '#34d399';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#d1fae5';
+                    ctx.fillRect(obs.x + 1, obs.y + 1, obs.width - 2, obs.height - 2);
+                } else if (obs.type === 'powerup') {
+                    ctx.shadowColor = '#a78bfa';
+                    ctx.shadowBlur = 5;
+                    ctx.fillStyle = '#a78bfa';
+                    ctx.beginPath();
+                    ctx.arc(obs.x + obs.width/2, obs.y + obs.height/2, obs.width/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                if (checkCollision(player, obs)) {
+                    if (obs.type === 'powerup') {
+                        activatePowerUp(obs.powerUpType);
+                        obstacles.splice(i, 1);
+                        createParticles(obs.x + 8, obs.y + 8, 7, '#a78bfa', 1.0);
+                        continue;
+                    }
+
+                    if ((obs.type === 'normal' || obs.type === 'moving') && player.vy > 0.18) {
+                        player.y = obs.y - player.height;
+                        player.vy = -1.9;
+                        combo = Math.min(combo + 1, 22);
+                        if (combo > maxCombo) maxCombo = combo;
+                        playSound('bounce');
+                        createParticles(player.x + 11, player.y + player.height, 2, '#67e8f9');
+                    } else if (obs.type === 'breakable' && player.vy > 0.18) {
+                        obs.health--;
+                        player.vy = -1.6;
+                        createParticles(obs.x + 5, obs.y + 2, 2, '#f59e0b', 0.8);
+                        if (obs.health <= 0) obstacles.splice(i, 1);
+                    } else if (obs.type === 'bouncy' && player.vy > 0.18) {
+                        player.y = obs.y - player.height;
+                        player.vy = -3.2;
+                        combo = Math.min(combo + 2, 22);
+                        if (combo > maxCombo) maxCombo = combo;
+                        playSound('bounce');
+                        createParticles(player.x + 11, player.y + player.height, 3, '#34d399', 0.9);
+                    } else if (!shieldActive) {
+                        loseLife();
+                        if (gameState !== 'playing') return;
+                    } else {
+                        shieldActive = false;
+                        createParticles(obs.x + 5, obs.y + 5, 3, '#60a5fa');
+                    }
+                }
+
+                if (obs.y > canvas.height + 18) obstacles.splice(i, 1);
+            }
+
+            // Coins + Magnet
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                const coin = collectibles[i];
+                coin.y += gameSpeed * 0.68;
+
+                if (activePowerUp && activePowerUp.type === 'magnet') {
+                    const dx = (player.x + player.width/2) - (coin.x + coin.size/2);
+                    const dy = (player.y + player.height/2) - (coin.y + coin.size/2);
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 105 && dist > 2) {
+                        coin.x += dx / dist * 2.9;
+                        coin.y += dy / dist * 2.9;
+                    }
+                }
+
+                ctx.save();
+                ctx.shadowColor = '#fcd34d';
+                ctx.shadowBlur = 5;
+                ctx.fillStyle = '#fcd34d';
+                ctx.beginPath();
+                ctx.arc(coin.x + coin.size/2, coin.y + coin.size/2, coin.size/2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#fef08c';
+                ctx.beginPath();
+                ctx.arc(coin.x + coin.size/2, coin.y + coin.size/2, coin.size/3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                if (!coin.collected && checkCollision(player, {x: coin.x, y: coin.y, width: coin.size, height: coin.size})) {
+                    coin.collected = true;
+                    let value = 9;
+                    if (activePowerUp && activePowerUp.type === 'scoreBoost') value = 16;
+                    coins += value;
+                    score += value;
+                    combo = Math.min(combo + 1, 22);
+                    if (combo > maxCombo) maxCombo = combo;
+                    playSound('coin');
+                    createParticles(coin.x + 3, coin.y + 3, 2, '#fcd34d');
+                }
+
+                if (coin.y > canvas.height + 10 || coin.collected) collectibles.splice(i, 1);
+            }
+
+            // Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.life--; p.vy += 0.025;
+                if (p.life <= 0) { particles.splice(i, 1); continue; }
+                ctx.globalAlpha = Math.max(0.04, p.life / 12);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            }
+            ctx.globalAlpha = 1;
+
+            ctx.restore();
+
+            if (frame % 23 === 0) spawnObstacle();
+            if (frame % 34 === 0) spawnCoin();
+            if (frame % 78 === 0 && !activePowerUp) spawnPowerUp();
+
+            if (frame % 110 === 0 && gameSpeed < 2.6) gameSpeed += 0.03;
+
+            let scoreAdd = 0.38;
+            if (activePowerUp && activePowerUp.type === 'scoreBoost') scoreAdd *= 1.45;
+            score += scoreAdd;
+
+            if (frame % 3 === 0) updateHUD();
+
+            frame++;
+            if (gameState === 'playing') requestAnimationFrame(gameLoop);
+        }
+
+        function loseLife() {
+            playSound('hit');
+            lives--;
+            combo = 1;
+            screenShake = 2;
+            updateHUD();
+
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                player.y = 65;
+                player.vy = 1.7;
+                shieldActive = true;
+                createParticles(player.x + 11, player.y + 11, 5, '#f43f5e');
+            }
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+            playSound('gameover');
+            stopMusic();
+            document.getElementById('hud').style.display = 'none';
+            document.getElementById('gameover-overlay').style.display = 'flex';
+
+            lastGameOverCoins = coins;
+            document.getElementById('final-score').innerText = String(Math.floor(score)).padStart(4, '0');
+            document.getElementById('coins-collected').innerText = coins;
+            document.getElementById('max-combo-final').innerText = maxCombo + 'x';
+
+            document.getElementById('double-coins-btn').style.display = lastGameOverCoins > 0 ? 'block' : 'none';
+
+            totalCoins += coins;
+            safeSetItem('neonFallTotalCoins_v17', totalCoins);
+
+            if (Math.floor(score) > highScore) {
+                highScore = Math.floor(score);
+                safeSetItem('neonFallHighScore_v17', highScore);
+            }
+            document.getElementById('best-score-final').innerText = String(highScore).padStart(4, '0');
+            updateHighScore();
+
+            createParticles(player.x + 11, player.y + 11, 10, '#f43f5e');
+
+            interstitialCount++;
+            if (interstitialCount % 3 === 0) {
+                setTimeout(() => {
+                    if (gameState === 'gameover') {
+                        showInterstitialAd();
+                    }
+                }, 700);
+            }
+        }
+
+        function showInterstitialAd() {
+            const overlay = document.getElementById('gameover-overlay');
+            const originalContent = overlay.innerHTML;
+            
+            overlay.innerHTML = `
+                <div style="text-align:center; padding-top:35px;">
+                    <i class="fa-solid fa-ad" style="font-size:42px; color:#a78bfa;"></i>
+                    <p style="font-size:12px; margin:10px 0 4px;">Anuncio</p>
+                    <div style="width:150px; height:3px; background:#334155; margin:12px auto; border-radius:9999px; overflow:hidden;">
+                        <div id="interstitial-progress" style="height:3px; background:#a78bfa; width:0%; transition: width 2s linear;"></div>
+                    </div>
+                    <p style="font-size:9px; color:#64748b; margin-top:6px;">Gracias por apoyar NEON FALL</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const bar = document.getElementById('interstitial-progress');
+                if (bar) bar.style.width = '100%';
+            }, 40);
+
+            setTimeout(() => {
+                if (gameState === 'gameover') {
+                    overlay.innerHTML = originalContent;
+                    document.getElementById('double-coins-btn').style.display = lastGameOverCoins > 0 ? 'block' : 'none';
+                }
+            }, 2200);
+        }
+
+        function startGame() {
+            document.getElementById('start-overlay').style.display = 'none';
+            document.getElementById('gameover-overlay').style.display = 'none';
+            document.getElementById('hud').style.display = 'flex';
+            resetGame();
+            initAudio();
+            updateHUD();
+            gameState = 'playing';
+            
+            if (isMusicPlaying) {
+                playAddictiveMusic();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function restartGame() {
+            document.getElementById('gameover-overlay').style.display = 'none';
+            startGame();
+        }
+
+        function goToMenu() {
+            document.getElementById('gameover-overlay').style.display = 'none';
+            document.getElementById('start-overlay').style.display = 'flex';
+            document.getElementById('hud').style.display = 'none';
+            stopMusic();
+            gameState = 'menu';
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function watchAdForContinue() {
+            const overlay = document.getElementById('gameover-overlay');
+            overlay.innerHTML = `
+                <div style="text-align:center; padding-top:26px;">
+                    <i class="fa-solid fa-play-circle" style="font-size:38px; color:#a78bfa;"></i>
+                    <p style="font-size:11px; margin:6px 0 2px;">Reproduciendo anuncio recompensado...</p>
+                    <div style="width:140px; height:3px; background:#334155; margin:10px auto; border-radius:9999px; overflow:hidden;">
+                        <div id="ad-progress-bar" style="height:3px; background:#a78bfa; width:0%; transition: width 1.9s linear;"></div>
+                    </div>
+                    <p style="font-size:9px; color:#64748b; margin-top:4px;">+1 Vida</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const bar = document.getElementById('ad-progress-bar');
+                if (bar) bar.style.width = '100%';
+            }, 20);
+
+            setTimeout(() => {
+                lives = Math.min(maxLives, lives + 1);
+                document.getElementById('gameover-overlay').style.display = 'none';
+                document.getElementById('hud').style.display = 'flex';
+                player.y = 58;
+                player.vy = 1.9;
+                shieldActive = true;
+                screenShake = 0.6;
+                gameState = 'playing';
+                createParticles(player.x + 11, player.y + 11, 4, '#a78bfa');
+                if (isMusicPlaying) playAddictiveMusic();
+                requestAnimationFrame(gameLoop);
+            }, 2100);
+        }
+
+        function watchAdToDoubleCoins() {
+            const overlay = document.getElementById('gameover-overlay');
+            overlay.innerHTML = `
+                <div style="text-align:center; padding-top:26px;">
+                    <i class="fa-solid fa-play-circle" style="font-size:38px; color:#f59e0b;"></i>
+                    <p style="font-size:11px; margin:6px 0 2px;">Reproduciendo anuncio...</p>
+                    <div style="width:140px; height:3px; background:#334155; margin:10px auto; border-radius:9999px; overflow:hidden;">
+                        <div id="double-ad-progress" style="height:3px; background:#f59e0b; width:0%; transition: width 1.8s linear;"></div>
+                    </div>
+                    <p style="font-size:9px; color:#64748b; margin-top:4px;">Duplicando monedas...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const bar = document.getElementById('double-ad-progress');
+                if (bar) bar.style.width = '100%';
+            }, 20);
+
+            setTimeout(() => {
+                const doubledCoins = lastGameOverCoins * 2;
+                totalCoins += doubledCoins;
+                safeSetItem('neonFallTotalCoins_v17', totalCoins);
+
+                document.getElementById('gameover-overlay').style.display = 'none';
+                document.getElementById('start-overlay').style.display = 'flex';
+                
+                alert(`¡Monedas duplicadas! +${lastGameOverCoins} monedas extras`);
+            }, 2000);
+        }
+
+        // ==================== DAILY REWARD ====================
+        function claimDailyReward() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (lastDailyClaim === today) {
+                alert('Ya reclamaste tu recompensa diaria hoy.');
+                return;
+            }
+
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            if (lastDailyClaim === yesterday) {
+                dailyStreak = Math.min(7, dailyStreak + 1);
+            } else {
+                dailyStreak = 1;
+            }
+
+            let reward = 25 + (dailyStreak * 8);
+            if (dailyStreak === 7) reward = 120;
+
+            totalCoins += reward;
+            safeSetItem('neonFallTotalCoins_v17', totalCoins);
+            safeSetItem('neonFallLastDaily_v17', today);
+            safeSetItem('neonFallDailyStreak_v17', dailyStreak);
+
+            alert(`¡Recompensa diaria reclamada!\n+${reward} monedas\nRacha: ${dailyStreak} días`);
+        }
+
+        // ==================== SHOP ====================
+        function showShop() {
+            const modal = document.getElementById('shop-modal');
+            const container = document.getElementById('shop-items');
+            container.innerHTML = '';
+            document.getElementById('shop-coins').innerText = totalCoins;
+
+            const items = [
+                { id: 'magnet', name: "Imán Mejorado", cost: 70 + (magnetLevel * 35), level: magnetLevel, maxLevel: 5, desc: `Atrae monedas más tiempo` },
+                { id: 'scoreBoost', name: "Multiplicador", cost: 80 + (scoreBoostLevel * 40), level: scoreBoostLevel, maxLevel: 5, desc: `Ganas más puntos` },
+                { id: 'extraLife', name: "Vida Extra", cost: 100 + (extraLifeLevel * 50), level: extraLifeLevel, maxLevel: 4, desc: `Más vidas al empezar` },
+                { id: 'character', name: "Nuevo Personaje", cost: 180 + (characterLevel * 70), level: characterLevel, maxLevel: 3, desc: `Desbloquea nuevo look` }
+            ];
+
+            items.forEach(item => {
+                const canBuy = totalCoins >= item.cost && item.level < item.maxLevel;
+                const div = document.createElement('div');
+                div.style.cssText = `display:flex; justify-content:space-between; align-items:center; padding:7px; background:#1e2937; border:1px solid #334155; border-radius:9px; ${canBuy ? '' : 'opacity:0.5;'}`;
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <div style="width:22px; height:22px; display:flex; align-items:center; justify-content:center; color:#f59e0b;">
+                            <i class="fa-solid fa-${item.id === 'magnet' ? 'magnet' : item.id === 'scoreBoost' ? 'chart-line' : item.id === 'extraLife' ? 'heart' : 'user'}" style="font-size:13px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:600; font-size:10px;">${item.name} <span style="font-size:7px; color:#64748b;">(Nv.${item.level})</span></div>
+                            <div style="font-size:7px; color:#64748b;">${item.desc}</div>
+                        </div>
+                    </div>
+                    <button style="padding:3px 7px; border-radius:5px; font-weight:bold; font-size:8px; background:${canBuy ? '#f59e0b' : '#334155'}; color:${canBuy ? '#0f172a' : '#64748b'}; border:none;" ${canBuy ? '' : 'disabled'}>
+                        ${item.cost} <i class="fa-solid fa-coins"></i>
+                    </button>
+                `;
+                
+                if (canBuy) {
+                    div.querySelector('button').onclick = () => buyUpgrade(item.id, item.cost, div);
+                }
+                container.appendChild(div);
+            });
+
+            modal.style.display = 'flex';
+        }
+
+        function buyUpgrade(id, cost, element) {
+            if (totalCoins < cost) return;
+
+            totalCoins -= cost;
+            safeSetItem('neonFallTotalCoins_v17', totalCoins);
+            document.getElementById('shop-coins').innerText = totalCoins;
+
+            if (id === 'magnet') {
+                magnetLevel = Math.min(5, magnetLevel + 1);
+                safeSetItem('neonFallMagnetLevel_v17', magnetLevel);
+            } else if (id === 'scoreBoost') {
+                scoreBoostLevel = Math.min(5, scoreBoostLevel + 1);
+                safeSetItem('neonFallScoreBoostLevel_v17', scoreBoostLevel);
+            } else if (id === 'extraLife') {
+                extraLifeLevel = Math.min(4, extraLifeLevel + 1);
+                maxLives = 3 + extraLifeLevel;
+                safeSetItem('neonFallExtraLifeLevel_v17', extraLifeLevel);
+            } else if (id === 'character') {
+                characterLevel = Math.min(3, characterLevel + 1);
+                safeSetItem('neonFallCharacterLevel_v17', characterLevel);
+            }
+
+            setTimeout(() => {
+                hideShop();
+                showShop();
+            }, 300);
+        }
+
+        function hideShop() {
+            document.getElementById('shop-modal').style.display = 'none';
+        }
+
+        // ==================== INPUT ====================
+        function setupInput() {
+            const canvasEl = document.getElementById('game-canvas');
+
+            canvasEl.addEventListener('touchstart', (e) => {
+                if (gameState !== 'playing') return;
+                e.preventDefault();
+                isDragging = true;
+                touchStartX = e.touches[0].clientX;
+                player.vy = player.boostForce;
+                playSound('boost');
+                createParticles(player.x + 11, player.y + player.height, 1, '#67e8f9');
+            }, { passive: false });
+
+            canvasEl.addEventListener('touchmove', (e) => {
+                if (!isDragging || gameState !== 'playing') return;
+                e.preventDefault();
+                const delta = (e.touches[0].clientX - touchStartX) * 0.4;
+                player.vx = Math.max(-player.maxSpeedX, Math.min(player.maxSpeedX, delta));
+            }, { passive: false });
+
+            canvasEl.addEventListener('touchend', () => {
+                isDragging = false;
+                if (gameState === 'playing') player.vx = 0;
+            });
+
+            canvasEl.addEventListener('mousedown', (e) => {
+                if (gameState !== 'playing') return;
+                isDragging = true;
+                touchStartX = e.clientX;
+                player.vy = player.boostForce;
+                playSound('boost');
+                createParticles(player.x + 11, player.y + player.height, 1, '#67e8f9');
+            });
+
+            canvasEl.addEventListener('mousemove', (e) => {
+                if (!isDragging || gameState !== 'playing') return;
+                const delta = (e.clientX - touchStartX) * 0.3;
+                player.vx = Math.max(-player.maxSpeedX, Math.min(player.maxSpeedX, delta));
+            });
+
+            canvasEl.addEventListener('mouseup', () => {
+                isDragging = false;
+                if (gameState === 'playing') player.vx = 0;
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (gameState === 'playing') {
+                    if (e.key === 'ArrowLeft') player.vx = -player.maxSpeedX;
+                    if (e.key === 'ArrowRight') player.vx = player.maxSpeedX;
+                    if (e.key === ' ' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        player.vy = player.boostForce;
+                        playSound('boost');
+                        createParticles(player.x + 11, player.y + player.height, 1, '#67e8f9');
+                    }
+                }
+                if (gameState === 'menu' && (e.key === ' ' || e.key === 'Enter')) startGame();
+                if (gameState === 'gameover' && e.key.toLowerCase() === 'r') restartGame();
+            });
+
+            document.addEventListener('keyup', (e) => {
+                if (gameState === 'playing' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) player.vx = 0;
+            });
+        }
+
+        function showMonetizationInfo() {
+            const m = document.createElement('div');
+            m.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:200; padding:7px;';
+            m.innerHTML = `
+                <div class="modal" style="max-width:260px; padding:10px;">
+                    <h3 style="font-size:10px; font-weight:bold; margin-bottom:5px;">Monetización AdMob</h3>
+                    <div style="font-size:9px; color:#cbd5e1; line-height:1.2;">
+                        • <strong>Rewarded Video</strong>: Continuar / ×2 monedas<br>
+                        • <strong>Interstitial</strong>: Cada 3 Game Overs<br>
+                        • <strong>Banner</strong>: Parte inferior
+                    </div>
+                    <button onclick="this.closest('.modal').parentElement.remove()" 
+                            style="margin-top:7px; width:100%; padding:4px; background:#334155; color:white; border:none; border-radius:5px; font-size:9px; cursor:pointer;">
+                        Entendido
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(m);
+        }
+
+        function initGame() {
+            updateHighScore();
+            setupInput();
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#67e8f9';
+            ctx.fillRect(189, 165, 22, 22);
+            
+            console.log('%c[NEON FALL v17] Highly polished final version. Ready for production.', 'color:#22c55e');
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>
